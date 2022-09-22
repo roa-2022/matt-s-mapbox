@@ -1,11 +1,14 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { fetchFruits } from '../actions'
-import mapboxgl from '!mapbox-gl'
-import {API_KEY} from '../../secrets'
 
+import Map, {Source, Layer} from 'react-map-gl'
+import mapboxgl from 'mapbox-gl'
+import {API_KEY} from '../../secrets'
 mapboxgl.accessToken = API_KEY
+
+
 
 function App() {
   const fruits = useSelector((state) => state.fruits)
@@ -14,39 +17,49 @@ function App() {
     dispatch(fetchFruits())
   }, [])
 
-  const mapContainer = useRef(null)
-  const map = useRef(null)
+
   const [lng, setLng] = useState(174.7740)
   const [lat, setLat] = useState(-41.2969)
   const [zoom, setZoom] = useState(17.15)
 
-  useEffect(() => {
-    if (map.current) return; // initialize map only once
-    map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v11',
-      center: [lng, lat],
-      zoom: zoom
-    })
-  })
+  // Here is some hard coded data
+  // In future, it will later be partially replaced by data from server
+  const geojson = {
+    type: 'FeatureCollection',
+    features: [
+      {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7730, -41.2969]}},
+      {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7750, -41.2969]}},
+    ]
+  }
 
-  useEffect(() => {
-    if (!map.current) return; // wait for map to initialize
-    map.current.on('move', () => {
-      setLng(map.current.getCenter().lng.toFixed(4))
-      setLat(map.current.getCenter().lat.toFixed(4))
-      setZoom(map.current.getZoom().toFixed(2))
-    })
-  })
+  const layerStyle = {
+    id: 'point',
+    type: 'circle',
+    paint: {
+      'circle-radius': 15,
+      'circle-color': '#007cbf'
+    }
+  }
+
 
   return (
     <>
       <div className="app">
+        <h2>React Map</h2>
         <div>
-          <div className="sidebar">
-            Longitude: {lng} | Latitude: {lat} | Zoom: {zoom}
-          </div>
-          <div ref={mapContainer} className="map-container" />
+          <Map 
+            initialViewState={{
+              longitude: lng,
+              latitude: lat,
+              zoom: zoom
+            }}
+            style={{width: 600, height: 400}}
+            mapStyle="mapbox://styles/mapbox/streets-v11"
+          >
+            <Source id="my-data" type="geojson" data={geojson}>
+              <Layer {...layerStyle} />
+            </Source>
+          </Map>
         </div>
       </div>
     </>
