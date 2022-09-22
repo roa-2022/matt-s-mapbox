@@ -12,9 +12,6 @@ mapboxgl.accessToken = API_KEY
 
 function App() {
   const fruits = useSelector((state) => state.fruits)
-  //
-  console.log(fruits)
-  //
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(fetchFruits())
@@ -30,10 +27,24 @@ function App() {
   const geojson = {
     type: 'FeatureCollection',
     features: [
-      {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7730, -41.2969]}},
-      {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7750, -41.2969]}},
+      // {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7730, -41.2969]}},
+      // {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7750, -41.2969]}},
     ]
   }
+
+  fruits.forEach(fruit => {
+    geojson.features.push(
+      {
+        type: 'Feature',
+        geometry: {
+          type: 'Point',
+          coordinates: [fruit.lng, fruit.lat]
+        }
+      }
+    )
+  });
+
+
 
   const layerStyle = {
     id: 'point',
