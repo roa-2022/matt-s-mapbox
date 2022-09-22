@@ -12,6 +12,9 @@ mapboxgl.accessToken = API_KEY
 
 function App() {
   const fruits = useSelector((state) => state.fruits)
+  //
+  console.log(fruits)
+  //
   const dispatch = useDispatch()
   useEffect(() => {
     dispatch(fetchFruits())

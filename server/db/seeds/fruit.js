@@ -7,7 +7,7 @@ exports.seed = function (knex) {
       return knex('fruit').insert([
         { id: 1, name: 'banana', lng: 174.7740, lat: -41.2969 },
         { id: 2, name: 'apple', lng: 174.7730, lat: -41.2969  },
-        { id: 3, name: 'feijoa', lng: 174.7750, lat: -41.2969  },
+        { id: 3, name: 'feijoa', lng: 174.7751, lat: -41.2969  },
       ])
     })
 }
