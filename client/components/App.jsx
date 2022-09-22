@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { fetchFruits } from '../actions'
 
-import Map, {Source, Layer} from 'react-map-gl'
+import Map, {Marker, Source, Layer} from 'react-map-gl'
 import mapboxgl from 'mapbox-gl'
 import {API_KEY} from '../../secrets'
 mapboxgl.accessToken = API_KEY
@@ -27,8 +27,6 @@ function App() {
   const geojson = {
     type: 'FeatureCollection',
     features: [
-      // {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7730, -41.2969]}},
-      // {type: 'Feature', geometry: {type: 'Point', coordinates: [174.7750, -41.2969]}},
     ]
   }
 
@@ -39,6 +37,10 @@ function App() {
         geometry: {
           type: 'Point',
           coordinates: [fruit.lng, fruit.lat]
+        },
+        properties: {
+          id: fruit.id,
+          name: 'Name goes here'
         }
       }
     )
@@ -46,7 +48,7 @@ function App() {
 
 
 
-  const layerStyle = {
+  const pointLayerStyle = {
     id: 'point',
     type: 'circle',
     paint: {
@@ -54,6 +56,37 @@ function App() {
       'circle-color': '#007cbf'
     }
   }
+
+  // const handleClick = (e) => {
+  //   console.log(e)
+  // }
+
+
+  // PIN
+  const ICON = `M20.2,15.7L20.2,15.7c1.1-1.6,1.8-3.6,1.8-5.7c0-5.6-4.5-10-10-10S2,4.5,2,10c0,2,0.6,3.9,1.6,5.4c0,0.1,0.1,0.2,0.2,0.3
+  c0,0,0.1,0.1,0.1,0.2c0.2,0.3,0.4,0.6,0.7,0.9c2.6,3.1,7.4,7.6,7.4,7.6s4.8-4.5,7.4-7.5c0.2-0.3,0.5-0.6,0.7-0.9
+  C20.1,15.8,20.2,15.8,20.2,15.7z`;
+
+const pinStyle = {
+  fill: '#d00',
+  stroke: 'none'
+};
+
+function Pin() {
+
+  return (
+    <svg height={20} viewBox="0 0 24 24" style={pinStyle}>
+      <path d={ICON} />
+    </svg>
+  );
+}
+
+const handleClick = (e, fruitId, fruitName) => {
+  e.originalEvent.stopPropagation()
+  console.log(e)
+  console.log(fruitId)
+  console.log(fruitName)
+}
 
 
   return (
@@ -70,9 +103,20 @@ function App() {
             style={{width: 600, height: 400}}
             mapStyle="mapbox://styles/mapbox/streets-v11"
           >
-            <Source id="my-data" type="geojson" data={geojson}>
-              <Layer {...layerStyle} />
-            </Source>
+            {
+            fruits.map((fruit, i) => {
+              return  <Marker
+                        key={`${fruit.name}${i}`}
+                        longitude={fruit.lng}
+                        latitude={fruit.lat}
+                        onClick={(e) => {
+                          handleClick(e, fruit.id, fruit.name)
+                        }}
+                      >
+                        <Pin/>
+                      </Marker>
+            })
+            }
           </Map>
         </div>
       </div>
