@@ -21,7 +21,7 @@ function App() {
   
   const handleClick = (e, fruitId, fruitName) => {
     e.originalEvent.stopPropagation()
-    alert('hello from ', fruitName)
+    alert(`hello from ${fruitName}`)
   }
 
   const initialViewState = {
