@@ -7,3 +7,11 @@ export function getFruits() {
     return res.body.fruits
   })
 }
+
+export function postFruit(fruit) {
+  return request.post(rootUrl + '/fruits')
+    .send(fruit)
+    .then((res) => {
+      return res.body
+  })
+}
